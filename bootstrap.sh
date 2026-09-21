@@ -119,9 +119,13 @@ run_step "5/6" \
     "GitHub configuration" \
     "scripts/05-github.sh"
 
-run_step "6/6" \
+run_step "6/7" \
     "Security configuration" \
     "scripts/06-security.sh"
+
+run_step "7/7" \
+    "Setup summary" \
+    "scripts/07-summary.sh"
 
 echo
 echo "========================================"

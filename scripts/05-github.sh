@@ -7,7 +7,9 @@ echo "[5/6] Configuring GitHub access..."
 DEPLOY_HOME="/home/$DEPLOY_USER"
 SSH_DIR="$DEPLOY_HOME/.ssh"
 
-GITHUB_KEY="$SSH_DIR/github_repo"
+SAFE_APP_NAME=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9_-')
+
+GITHUB_KEY="$SSH_DIR/github_$SAFE_APP_NAME"
 CI_KEY="$SSH_DIR/github_actions_deploy"
 
 # --------------------------------------------------

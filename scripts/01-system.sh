@@ -11,6 +11,7 @@ apt-get install -y \
     curl \
     git \
     unzip \
+    jq \
     ca-certificates \
     gnupg \
     lsb-release \

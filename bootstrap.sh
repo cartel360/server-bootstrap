@@ -4,6 +4,8 @@ set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+MODE="${1:-full}"
+
 # --------------------------------------------------
 # Error handling
 # --------------------------------------------------
@@ -19,6 +21,44 @@ if [[ $EUID -ne 0 ]]; then
     echo
     echo "sudo ./bootstrap.sh"
     exit 1
+fi
+
+if [[ "$MODE" == "nginx" ]]; then
+
+    echo
+    echo "========================================"
+    echo "       NGINX APP SETUP"
+    echo "========================================"
+    echo
+
+    read -rp "Application name: " APP_NAME
+
+    if [[ -z "$APP_NAME" ]]; then
+        echo "❌ Application name is required."
+        exit 1
+    fi
+
+    read -rp "Domain/subdomain: " APP_DOMAIN
+
+    if [[ -z "$APP_DOMAIN" ]]; then
+        echo "❌ Domain is required."
+        exit 1
+    fi
+
+    read -rp "Application host port: " APP_PORT
+
+    if [[ -z "$APP_PORT" ]]; then
+        echo "❌ Application port is required."
+        exit 1
+    fi
+
+    export APP_NAME
+    export APP_DOMAIN
+    export APP_PORT
+
+    bash "$SCRIPT_DIR/scripts/08-nginx.sh"
+
+    exit 0
 fi
 
 # --------------------------------------------------
@@ -99,37 +139,41 @@ run_step() {
 # Bootstrap
 # --------------------------------------------------
 
-run_step "1/8" \
+run_step "1/9" \
     "System setup" \
     "scripts/01-system.sh"
 
-run_step "2/8" \
+run_step "2/9" \
     "Docker installation" \
     "scripts/02-docker.sh"
 
-run_step "3/8" \
+run_step "3/9" \
     "Deployment user" \
     "scripts/03-deploy-user.sh"
 
-run_step "4/8" \
+run_step "4/9" \
     "Application preflight checks" \
     "scripts/04-app-preflight.sh"
 
-run_step "5/8" \
+run_step "5/9" \
     "Firewall configuration" \
     "scripts/05-firewall.sh"
 
-run_step "6/8" \
+run_step "6/9" \
     "GitHub configuration" \
     "scripts/06-github.sh"
 
-run_step "7/8" \
+run_step "7/9" \
     "Security configuration" \
     "scripts/07-security.sh"
 
-run_step "8/8" \
+run_step "8/9" \
+    "Nginx Setup" \
+    "scripts/00-nginx.sh"
+
+run_step "9/9" \
     "Setup summary" \
-    "scripts/08-summary.sh"
+    "scripts/09-summary.sh"
 
 echo
 echo "========================================"

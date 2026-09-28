@@ -99,33 +99,37 @@ run_step() {
 # Bootstrap
 # --------------------------------------------------
 
-run_step "1/6" \
+run_step "1/8" \
     "System setup" \
     "scripts/01-system.sh"
 
-run_step "2/6" \
+run_step "2/8" \
     "Docker installation" \
     "scripts/02-docker.sh"
 
-run_step "3/6" \
+run_step "3/8" \
     "Deployment user" \
     "scripts/03-deploy-user.sh"
 
-run_step "4/6" \
+run_step "4/8" \
+    "Application preflight checks" \
+    "scripts/04-app-preflight.sh"
+
+run_step "5/8" \
     "Firewall configuration" \
-    "scripts/04-firewall.sh"
+    "scripts/05-firewall.sh"
 
-run_step "5/6" \
+run_step "6/8" \
     "GitHub configuration" \
-    "scripts/05-github.sh"
+    "scripts/06-github.sh"
 
-run_step "6/7" \
+run_step "7/8" \
     "Security configuration" \
-    "scripts/06-security.sh"
+    "scripts/07-security.sh"
 
-run_step "7/7" \
+run_step "8/8" \
     "Setup summary" \
-    "scripts/07-summary.sh"
+    "scripts/08-summary.sh"
 
 echo
 echo "========================================"

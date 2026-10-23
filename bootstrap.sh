@@ -23,12 +23,15 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-if [[ "$MODE" == "nginx" ]]; then
+if [[ "$MODE" == "nginx" || "$MODE" == "app" ]]; then
 
     echo
     echo "========================================"
-    echo "       NGINX APP SETUP"
+    echo "       ADD APPLICATION PROXY"
     echo "========================================"
+    echo
+    echo "Adds an Nginx site for one application."
+    echo "Run this again for each additional project."
     echo
 
     read -rp "Application name: " APP_NAME
@@ -38,6 +41,9 @@ if [[ "$MODE" == "nginx" ]]; then
         exit 1
     fi
 
+    read -rp "Application directory [/var/www/$APP_NAME]: " APP_DIR
+    APP_DIR=${APP_DIR:-/var/www/$APP_NAME}
+
     read -rp "Domain/subdomain: " APP_DOMAIN
 
     if [[ -z "$APP_DOMAIN" ]]; then
@@ -45,20 +51,20 @@ if [[ "$MODE" == "nginx" ]]; then
         exit 1
     fi
 
-    read -rp "Application host port: " APP_PORT
-
-    if [[ -z "$APP_PORT" ]]; then
-        echo "❌ Application port is required."
-        exit 1
-    fi
-
     export APP_NAME
+    export APP_DIR
     export APP_DOMAIN
-    export APP_PORT
 
     bash "$SCRIPT_DIR/scripts/08-nginx.sh"
 
     exit 0
+fi
+
+if [[ "$MODE" != "full" ]]; then
+    echo "Usage:"
+    echo "  sudo ./bootstrap.sh       First-time server setup"
+    echo "  sudo ./bootstrap.sh app   Proxy another application on this server"
+    exit 1
 fi
 
 # --------------------------------------------------
@@ -105,12 +111,15 @@ if [[ -z "$GITHUB_REPO" ]]; then
     exit 1
 fi
 
+read -rp "Public domain (blank to skip Nginx): " APP_DOMAIN
+
 export DEPLOY_USER
 export APP_NAME
 export APP_DIR
 export APP_DOMAIN
 export APP_PORT
 export GITHUB_REPO
+export APP_DOMAIN
 
 echo
 echo "Configuration"
@@ -121,6 +130,11 @@ echo "Directory       : $APP_DIR"
 echo "Domain          : $APP_DOMAIN"
 echo "Host port       : $APP_PORT"
 echo "Repository      : $GITHUB_REPO"
+if [[ -n "${APP_DOMAIN:-}" ]]; then
+    echo "Domain          : $APP_DOMAIN"
+else
+    echo "Domain          : (Nginx skipped)"
+fi
 echo
 
 read -rp "Continue? [Y/n]: " CONTINUE
@@ -185,9 +199,21 @@ run_step "7/9" \
     "Security configuration" \
     "scripts/07-security.sh"
 
-run_step "8/9" \
-    "Nginx Setup" \
-    "scripts/08-nginx.sh"
+if [[ -n "${APP_DOMAIN:-}" ]]; then
+    run_step "8/9" \
+        "Nginx setup" \
+        "scripts/08-nginx.sh"
+else
+    echo
+    echo "========================================"
+    echo "[8/9] Nginx setup"
+    echo "========================================"
+    echo
+    echo "Skipped. Add a site later with:"
+    echo
+    echo "  sudo ./bootstrap.sh app"
+    echo
+fi
 
 run_step "9/9" \
     "Setup summary" \

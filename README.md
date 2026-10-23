@@ -132,6 +132,37 @@ The application will then use:
 /var/www/my-app
 ```
 
+You can also give a public domain. Nginx will proxy that hostname to the application's published host port. Leave the domain blank to skip Nginx during first-time setup.
+
+---
+
+# 🌐 Another Application on the Same Server
+
+The first bootstrap configures the server once. Each additional project only needs its own directory, host port, and Nginx site.
+
+Publish a different host port in that project's Compose file. Internal container ports can stay the same:
+
+```yaml
+ports:
+  - "127.0.0.1:8002:8000"
+```
+
+Then, from this repository on the server:
+
+```bash
+sudo ./bootstrap.sh app
+```
+
+The script asks for the application name, directory, and domain. It reads the published web port from that directory's Compose file and writes an Nginx site:
+
+```text
+app.example.com  ->  http://127.0.0.1:8002
+```
+
+Run the same command again for every later project. Existing sites are left in place. Re-running it for a domain that already exists updates that site and keeps a backup of the previous config.
+
+Point DNS for the new hostname at this server before expecting the site to answer. The firewall already allows ports 80 and 443.
+
 ---
 
 # 🐳 Docker

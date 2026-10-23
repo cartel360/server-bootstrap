@@ -276,15 +276,30 @@ echo
 echo "✓ Nginx configuration valid."
 
 # --------------------------------------------------
-# Enable and start/reload nginx
+# Start/reload and enable nginx
 # --------------------------------------------------
 
-systemctl enable nginx
-
 if systemctl is-active --quiet nginx; then
-    systemctl reload nginx
+    if ! systemctl reload nginx; then
+        echo "❌ Nginx reload failed. Service status and recent logs:"
+        systemctl status nginx --no-pager || true
+        journalctl -u nginx -n 40 --no-pager || true
+        exit 1
+    fi
 else
-    systemctl start nginx
+    if ! systemctl start nginx; then
+        echo "❌ Nginx failed to start. Service status and recent logs:"
+        systemctl status nginx --no-pager || true
+        journalctl -u nginx -n 40 --no-pager || true
+        exit 1
+    fi
+fi
+
+if ! systemctl enable nginx; then
+    echo "❌ Nginx is running, but could not be enabled to start at boot."
+    systemctl status nginx --no-pager || true
+    journalctl -u nginx -n 40 --no-pager || true
+    exit 1
 fi
 
 echo "✓ Nginx is running with the updated configuration."

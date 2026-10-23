@@ -25,9 +25,6 @@ else
     echo "✓ Nginx already installed."
 fi
 
-systemctl enable nginx
-systemctl start nginx
-
 # --------------------------------------------------
 # Existing routes
 # --------------------------------------------------
@@ -279,12 +276,18 @@ echo
 echo "✓ Nginx configuration valid."
 
 # --------------------------------------------------
-# Reload nginx
+# Enable and start/reload nginx
 # --------------------------------------------------
 
-systemctl reload nginx
+systemctl enable nginx
 
-echo "✓ Nginx reloaded."
+if systemctl is-active --quiet nginx; then
+    systemctl reload nginx
+else
+    systemctl start nginx
+fi
+
+echo "✓ Nginx is running with the updated configuration."
 
 # --------------------------------------------------
 # Summary

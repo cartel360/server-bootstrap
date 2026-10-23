@@ -102,6 +102,8 @@ The script will ask for information such as:
 Deployment user [deploy]:
 Application name:
 Application directory:
+Application domain/subdomain:
+Application host port:
 GitHub repository SSH URL:
 ```
 
@@ -113,6 +115,10 @@ Deployment user [deploy]: deploy
 Application name: my-app
 
 Application directory [/var/www/my-app]:
+
+Application domain/subdomain: my-app.example.com
+
+Application host port: 8001
 
 GitHub repository SSH URL:
 git@github.com:username/my-app.git

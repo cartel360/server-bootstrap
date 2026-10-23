@@ -84,6 +84,20 @@ fi
 read -rp "Application directory [/var/www/$APP_NAME]: " APP_DIR
 APP_DIR=${APP_DIR:-/var/www/$APP_NAME}
 
+read -rp "Application domain/subdomain: " APP_DOMAIN
+
+if [[ -z "$APP_DOMAIN" ]]; then
+    echo "❌ Application domain is required."
+    exit 1
+fi
+
+read -rp "Application host port: " APP_PORT
+
+if [[ -z "$APP_PORT" ]]; then
+    echo "❌ Application port is required."
+    exit 1
+fi
+
 read -rp "GitHub repository SSH URL: " GITHUB_REPO
 
 if [[ -z "$GITHUB_REPO" ]]; then
@@ -94,6 +108,8 @@ fi
 export DEPLOY_USER
 export APP_NAME
 export APP_DIR
+export APP_DOMAIN
+export APP_PORT
 export GITHUB_REPO
 
 echo
@@ -102,6 +118,8 @@ echo "----------------------------------------"
 echo "Deployment user : $DEPLOY_USER"
 echo "Application     : $APP_NAME"
 echo "Directory       : $APP_DIR"
+echo "Domain          : $APP_DOMAIN"
+echo "Host port       : $APP_PORT"
 echo "Repository      : $GITHUB_REPO"
 echo
 
@@ -169,7 +187,7 @@ run_step "7/9" \
 
 run_step "8/9" \
     "Nginx Setup" \
-    "scripts/00-nginx.sh"
+    "scripts/08-nginx.sh"
 
 run_step "9/9" \
     "Setup summary" \

@@ -7,7 +7,7 @@ echo "Configuring Nginx for:"
 echo
 echo "Application : $APP_NAME"
 echo "Domain      : $APP_DOMAIN"
-echo "Port        : $APP_PORT"
+echo "Port        : ${APP_PORT:-"(auto-detect)"}"
 echo
 
 # --------------------------------------------------

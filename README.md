@@ -102,9 +102,8 @@ The script will ask for information such as:
 Deployment user [deploy]:
 Application name:
 Application directory:
-Application domain/subdomain:
-Application host port:
 GitHub repository SSH URL:
+Public domain (blank to skip Nginx):
 ```
 
 Example:
@@ -116,12 +115,10 @@ Application name: my-app
 
 Application directory [/var/www/my-app]:
 
-Application domain/subdomain: my-app.example.com
-
-Application host port: 8001
-
 GitHub repository SSH URL:
 git@github.com:username/my-app.git
+
+Public domain (blank to skip Nginx): my-app.example.com
 ```
 
 If the default application directory is acceptable, simply press **Enter**.
@@ -132,7 +129,7 @@ The application will then use:
 /var/www/my-app
 ```
 
-You can also give a public domain. Nginx will proxy that hostname to the application's published host port. Leave the domain blank to skip Nginx during first-time setup.
+If you provide a public domain, Nginx will proxy it to the application's published host port. The setup detects a published port from Docker Compose when possible, or prompts for one. Leave the domain blank to skip Nginx during first-time setup.
 
 ---
 

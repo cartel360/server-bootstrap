@@ -90,20 +90,6 @@ fi
 read -rp "Application directory [/var/www/$APP_NAME]: " APP_DIR
 APP_DIR=${APP_DIR:-/var/www/$APP_NAME}
 
-read -rp "Application domain/subdomain: " APP_DOMAIN
-
-if [[ -z "$APP_DOMAIN" ]]; then
-    echo "❌ Application domain is required."
-    exit 1
-fi
-
-read -rp "Application host port: " APP_PORT
-
-if [[ -z "$APP_PORT" ]]; then
-    echo "❌ Application port is required."
-    exit 1
-fi
-
 read -rp "GitHub repository SSH URL: " GITHUB_REPO
 
 if [[ -z "$GITHUB_REPO" ]]; then
@@ -117,9 +103,7 @@ export DEPLOY_USER
 export APP_NAME
 export APP_DIR
 export APP_DOMAIN
-export APP_PORT
 export GITHUB_REPO
-export APP_DOMAIN
 
 echo
 echo "Configuration"
@@ -127,8 +111,6 @@ echo "----------------------------------------"
 echo "Deployment user : $DEPLOY_USER"
 echo "Application     : $APP_NAME"
 echo "Directory       : $APP_DIR"
-echo "Domain          : $APP_DOMAIN"
-echo "Host port       : $APP_PORT"
 echo "Repository      : $GITHUB_REPO"
 if [[ -n "${APP_DOMAIN:-}" ]]; then
     echo "Domain          : $APP_DOMAIN"

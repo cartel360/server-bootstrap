@@ -156,9 +156,13 @@ The script asks for the application name, directory, and domain. It reads the pu
 app.example.com  ->  http://127.0.0.1:8002
 ```
 
-Run the same command again for every later project. Existing sites are left in place. Re-running it for a domain that already exists updates that site and keeps a backup of the previous config.
+Run the same command again for every later project. Nginx is installed once and shared by all applications; each run adds a separate site for that application's domain. Existing enabled sites, including the first application's site, are left in place, so their proxy routes continue to work. Re-running it for a domain that already exists updates only that site's config and keeps a backup of the previous config. If the first application does not already have an enabled Nginx site, configure it separately with `sudo ./bootstrap.sh app`.
 
 Point DNS for the new hostname at this server before expecting the site to answer. The firewall already allows ports 80 and 443.
+
+Nginx must be able to bind host port 80 (and port 443 if HTTPS is configured). If another web server or container already owns port 80, move that service to its own application port before using this Nginx setup, or configure the existing web server to route all application domains. The setup reports the process occupying port 80 and stops before changing Nginx site files; it does not stop or replace existing services.
+
+For example, if the existing app publishes container port 3000 directly as host port 80 (`80:3000`), change that Compose mapping to a loopback-only host port such as `127.0.0.1:8001:3000`, then recreate the app container. Nginx can then own public port 80 and proxy the app's domain to `127.0.0.1:8001`. Keep any other published ports only if they are intentionally needed.
 
 ---
 

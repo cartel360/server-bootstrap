@@ -11,6 +11,27 @@ echo "Port        : ${APP_PORT:-"(auto-detect)"}"
 echo
 
 # --------------------------------------------------
+# Check the HTTP listener before installing or changing site configs
+# --------------------------------------------------
+
+if ! command -v ss >/dev/null 2>&1; then
+    echo "❌ The ss command is required to check whether port 80 is available."
+    exit 1
+fi
+
+HTTP_LISTENERS="$(ss -H -ltnp 'sport = :80')"
+if [[ -n "$HTTP_LISTENERS" ]] && grep -Evq 'users:\(\("nginx"' <<< "$HTTP_LISTENERS"; then
+    echo "❌ Port 80 is already in use by a process other than Nginx:"
+    echo "$HTTP_LISTENERS"
+    echo
+    echo "Nginx cannot serve this domain until it owns port 80."
+    echo "Move the existing web service to an application port (preferably bound to"
+    echo "127.0.0.1), or configure that service as the reverse proxy for all domains."
+    echo "No Nginx site was changed."
+    exit 1
+fi
+
+# --------------------------------------------------
 # Install nginx if needed
 # --------------------------------------------------
 
